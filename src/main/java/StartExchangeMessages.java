@@ -1,11 +1,14 @@
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 public class StartExchangeMessages {
 
-    private ConcurrentLinkedDeque<String> messagesQueue;
+    private ConcurrentLinkedDeque<Map<Integer, String>> messagesQueue;
 
     public StartExchangeMessages() {
-        messagesQueue = new ConcurrentLinkedDeque<String>();
+        messagesQueue = new ConcurrentLinkedDeque<Map<Integer, String>>();
+        messagesQueue.add(new HashMap<Integer, String>() {{ put(0, "border"); }});
 
         Thread initiator = new Thread(new Player("initiator", 10, messagesQueue));
         initiator.start();
