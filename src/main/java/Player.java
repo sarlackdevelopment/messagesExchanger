@@ -45,43 +45,14 @@ public class Player implements Runnable {
 
     public void send() {
         System.out.println("Producer started");
-//        String name = this.name;
-//        String ins  = "";
-//        for (int i = 0; i < this.capacityMessages; i++) {
-//            String element = "'" + name + i + "'";
-//            if (this.messagesQueue.size() % 2 == 1) {
-//                this.messagesQueue.addFirst(element);
-//                ins = "addFirst (" + element + ")";
-//            } else {
-//                this.messagesQueue.addLast(element);
-//                ins = "addLast (" + element + ")";
-//            }
-//            System.out.println(name + ins
-//                    + ": queue.size()="
-//                    + this.messagesQueue.size());
-//            try {
-//                Thread.sleep(200);
-//            } catch (InterruptedException e) {}
-//        }
 
-        //String name = this.name;
-        //String ins  = "";
-        //for (int i = 0; i < this.capacityMessages; i++) {
         while (this.countOfMessagesSent < this.capacityMessages) {
+
             this.countOfMessagesSent++;
-            //String element = "'" + this.name + i + "'"; // StringBuilder
+
             Map<Integer, String> message = new HashMap<>();
             message.put(this.countOfMessagesSent, "Hello! I love you! Would you tell me your name?");
             this.messagesQueue.addLast(message);
-
-
-//            if (this.messagesQueue.size() % 2 == 1) {
-//                this.messagesQueue.addFirst(element);
-//                ins = "addFirst (" + element + ")";
-//            } else {
-//                this.messagesQueue.addLast(element);
-//                ins = "addLast (" + element + ")";
-//            }
 
             StringBuffer logMessage = new StringBuffer();
             logMessage
@@ -104,22 +75,24 @@ public class Player implements Runnable {
 
             if (this.messagesQueue.isEmpty()) continue;
 
-            this.countOfMessagesReceive++;
+            Map<Integer, String> firstMessage = this.messagesQueue.getFirst();
+            ArrayList<Integer> firstKeys = new ArrayList<>(firstMessage.keySet());
+            int firstSenderKey = firstKeys.get(0);
+            String firstSenderMessage = firstMessage.get(firstSenderKey);
 
-            Map<Integer, String> message = this.messagesQueue.getFirst();
-            ArrayList<Integer> senderKeys = new ArrayList<>(message.keySet());
-            int firstSenderKey = senderKeys.get(0);
-            String firstSenderMessage = message.get(firstSenderKey);
+            if ((firstSenderMessage.equals("border")) && this.messagesQueue.size() <= 1) continue;
 
-            if ((!firstSenderMessage.equals("border")) && this.countOfMessagesReceive == 10) {
-                this.messagesQueue.stream().collect(Collectors.toList()).forEach(System.out::println);
-                break;
-            }
+            Map<Integer, String> lastMessage = this.messagesQueue.getLast();
+            ArrayList<Integer> lastKeys = new ArrayList<>(lastMessage.keySet());
+            int lastSenderKey = lastKeys.get(0);
+            String lastSenderMessage = lastMessage.get(lastSenderKey);
+
+            if (lastSenderKey <= this.countOfMessagesReceive) continue;
 
             Map<Integer, String> answer = new HashMap<>();
             StringBuffer answerMessage = new StringBuffer();
             answerMessage
-                    .append(firstSenderMessage)
+                    .append(lastSenderMessage)
                     .append(" count of receive messages is ")
                     .append(this.countOfMessagesReceive);
             answer.put(this.countOfMessagesReceive, answerMessage.toString());
@@ -133,51 +106,19 @@ public class Player implements Runnable {
 
             System.out.println(logMessage);
 
+            this.countOfMessagesReceive++;
+
+            if (this.countOfMessagesReceive == 10) {
+                this.messagesQueue.stream().collect(Collectors.toList()).forEach(System.out::println);
+                break;
+            }
+
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {}
 
-
-
-//            if (firstSenderMessage.equals("border")) {
-//
-//                Map<Integer, String> answer = new HashMap<>();
-//                StringBuffer answerMessage = new StringBuffer();
-//                answerMessage
-//                        .append(firstSenderMessage)
-//                        .append(" count of receive messages is ")
-//                        .append(this.countOfMessagesReceive);
-//                answer.put(this.countOfMessagesReceive, answerMessage.toString());
-//                this.messagesQueue.addFirst(answer);
-//
-//            } else {
-//
-//                if (firstSenderKey == 10) break;
-//
-//
-//
-//            }
-
-
         }
 
-
-//        for (int i = 0; i < 10; i++) {
-//            String text = "\n   receiver : queue.size()="
-//                    + this.messagesQueue.size();
-//            String element;
-//            if (this.messagesQueue.size() % 2 == 1)
-//                element = "pollFirst : "
-//                        + this.messagesQueue.pollFirst();
-//            else
-//                element = "pollLast : "
-//                        + this.messagesQueue.pollLast();
-//            text += ", " + element;
-//            System.out.println(text);
-//            try {
-//                Thread.sleep(500);
-//            } catch (InterruptedException e) {}
-//        }
     }
 
     @Override
